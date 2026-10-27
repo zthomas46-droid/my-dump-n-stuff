@@ -1,4 +1,37 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#09090b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="My Dump"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css"><title>My Dump</title></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#09090b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="My Dump"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="style.css"><title>My Dump</title>
+<style>
+
+nav,
+
+#details,
+
+#actions,
+
+#swipeHint,
+
+.brand {
+
+  display: none !important;
+
+}
+
+#stage {
+
+  inset: 0 !important;
+
+}
+
+#topbar {
+
+  justify-content: flex-end !important;
+
+  padding: calc(13px + env(safe-area-inset-top)) 17px 17px !important;
+
+  background: linear-gradient(180deg, rgba(0,0,0,.28), transparent) !important;
+
+}
+
+</style></head><body>
 <main id="app"><section id="stage" aria-label="Media feed"><div id="mediaMount"></div><div id="topbar"><div class="brand">MY DUMP <span id="counter"></span></div><button id="addTop" class="pill" aria-label="Import media">＋ Add</button></div><div id="empty" class="hidden"><div class="empty-icon">▶</div><h1>Your private feed.</h1><p>Add photos, videos, or GIFs from your iPhone. Swipe up or down to browse.</p><button id="emptyAdd" class="primary">＋ Add media</button><small>Files are stored on this device, not uploaded.</small></div><div id="details"><div id="filename"></div><div id="date"></div></div><aside id="actions"><button id="fav" aria-label="Toggle favorite">♡</button><button id="mute" aria-label="Toggle sound">◖))</button><button id="more" aria-label="More options">⋯</button></aside><div id="swipeHint">↑ Swipe for next</div></section>
 <nav><button id="all" class="active"><span>▣</span>Feed</button><button id="favorites"><span>♡</span>Favorites</button><button id="shuffle"><span>⤨</span>Shuffle</button><button id="library"><span>☷</span>Library</button></nav>
 <input id="fileInput" type="file" multiple accept="image/*,video/*,.gif,.mov,.mp4,.m4v,.webm" hidden>
