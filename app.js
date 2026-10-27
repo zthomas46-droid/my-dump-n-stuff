@@ -5,7 +5,7 @@ const DB = 'my-dump-media-v1';
 const STORE = 'items';
 
 // Increase this number for a slower glide (milliseconds).
-const GLIDE_MS = 480;
+const GLIDE_MS = 650;
 const GLIDE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 let db;
