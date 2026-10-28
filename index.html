@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,238 +7,294 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="My Dump">
-
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="style.css">
-
 <title>My Dump</title>
-
 <style>
-/* Full screen in portrait AND landscape */
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-  background: #000;
-}
-
+/* Keep your existing full-screen photo layout. */
+html, body { width:100%; height:100%; margin:0; overflow:hidden; background:#000; }
 #app, #stage {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  overflow: hidden !important;
-  background: #000 !important;
+  position:fixed !important; inset:0 !important;
+  width:100% !important; height:100vh !important; height:100dvh !important;
+  overflow:hidden !important; background:#000 !important;
 }
-
-/* Media always matches screen dimensions */
 #mediaMount {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important;
+  position:absolute !important; inset:0 !important;
+  width:100% !important; height:100% !important; overflow:hidden !important;
 }
-
-/* Keep animated swipe slides full screen */
 #mediaMount .dump-slide {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
+  position:absolute !important; inset:0 !important;
+  width:100% !important; height:100% !important;
 }
-
-/* Photos fill the screen automatically */
 #mediaMount img.media {
-  position: absolute !important;
-  inset: 0 !important;
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-  object-fit: cover !important;
-  object-position: center !important;
+  position:absolute !important; inset:0 !important; display:block !important;
+  width:100% !important; height:100% !important;
+  max-width:none !important; max-height:none !important;
+  object-fit:cover !important; object-position:center !important;
 }
-
-/* Videos maintain their existing fit */
 #mediaMount video.media {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
+  width:100% !important; height:100% !important; object-fit:contain !important;
 }
-
-/* Hide unnecessary controls */
-#details,
-#actions,
-#swipeHint,
-.brand,
-nav button:not(#library) {
-  display: none !important;
+#details, #actions, #swipeHint, .brand, nav button:not(#library) {
+  display:none !important;
 }
-
-/* Minimal Add button */
 #topbar {
-  justify-content: flex-end !important;
-  padding: calc(13px + env(safe-area-inset-top)) 17px 17px !important;
-  background: linear-gradient(
-    180deg,
-    rgba(0,0,0,.28),
-    transparent
-  ) !important;
+  justify-content:flex-end !important;
+  padding:calc(13px + env(safe-area-inset-top)) 17px 17px !important;
+  background:linear-gradient(180deg,rgba(0,0,0,.28),transparent) !important;
 }
-
-/* Small Library button */
 nav {
-  display: flex !important;
-  position: fixed !important;
-  bottom: calc(18px + env(safe-area-inset-bottom)) !important;
-  left: 16px !important;
-  right: auto !important;
-  top: auto !important;
-  width: 48px !important;
-  height: 48px !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  z-index: 100 !important;
+  display:flex !important; position:fixed !important;
+  bottom:calc(18px + env(safe-area-inset-bottom)) !important;
+  left:16px !important; right:auto !important; top:auto !important;
+  width:48px !important; height:48px !important; padding:0 !important;
+  background:transparent !important; border:none !important; box-shadow:none !important;
+  z-index:100 !important;
 }
-
 nav #library {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: 50% !important;
-  background: rgba(0,0,0,.55) !important;
-  color: white !important;
-  font-size: 0 !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  width:48px !important; height:48px !important; min-width:0 !important;
+  padding:0 !important; margin:0 !important; border-radius:50% !important;
+  background:rgba(0,0,0,.55) !important; color:white !important;
+  font-size:0 !important;
 }
+nav #library span { font-size:23px !important; }
 
-nav #library span {
-  font-size: 23px !important;
+/* Passcode screen: hidden app stays in memory, but can't be used until unlocked. */
+body.dump-locked #app { visibility:hidden !important; }
+#passcodeScreen {
+  position:fixed; inset:0; z-index:2147483647;
+  display:flex; align-items:center; justify-content:center;
+  padding:calc(24px + env(safe-area-inset-top)) 24px
+          calc(24px + env(safe-area-inset-bottom));
+  box-sizing:border-box; background:#09090b; color:white;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  text-align:center;
 }
+#passcodeScreen[hidden] { display:none !important; }
+#passcodeCard { width:min(100%,340px); }
+#passcodeIcon { font-size:38px; margin-bottom:16px; }
+#passcodeTitle { font-size:25px; font-weight:700; margin:0 0 10px; }
+#passcodeHelp { color:#b6b6bd; font-size:15px; line-height:1.5; margin:0 0 24px; }
+#passcodeInput {
+  display:block; width:100%; box-sizing:border-box;
+  font-size:27px; font-weight:600; letter-spacing:.45em;
+  text-align:center; color:#fff; background:#222228;
+  border:1px solid #44444d; border-radius:12px;
+  padding:15px 12px; outline-offset:3px;
+}
+#passcodeSubmit {
+  display:block; width:100%; margin-top:14px;
+  background:#f5f5f5; color:#111; border:0; border-radius:12px;
+  padding:15px 18px; font-size:16px; font-weight:700;
+}
+#passcodeSubmit:disabled { opacity:.55; }
+#passcodeMessage { min-height:22px; margin-top:14px; color:#ffb4b4; font-size:14px; }
 </style>
 </head>
+<body class="dump-locked">
 
-<body>
+<div id="passcodeScreen" role="dialog" aria-modal="true" aria-labelledby="passcodeTitle">
+  <form id="passcodeCard" autocomplete="off">
+    <div id="passcodeIcon" aria-hidden="true">&#128274;</div>
+    <h1 id="passcodeTitle">Loading lockâ¦</h1>
+    <p id="passcodeHelp">Preparing your private media app.</p>
+    <label for="passcodeInput" style="position:absolute;left:-9999px">Six-digit passcode</label>
+    <input id="passcodeInput" type="password" inputmode="numeric"
+           pattern="[0-9]{6}" minlength="6" maxlength="6"
+           autocomplete="off" placeholder="â¢â¢â¢â¢â¢â¢" required>
+    <button id="passcodeSubmit" type="submit">Continue</button>
+    <div id="passcodeMessage" role="status" aria-live="polite"></div>
+  </form>
+</div>
+
 <main id="app">
-
 <section id="stage" aria-label="Media feed">
-
-<div id="mediaMount"></div>
-
-<div id="topbar">
-  <div class="brand">
-    MY DUMP <span id="counter"></span>
+  <div id="mediaMount"></div>
+  <div id="topbar">
+    <div class="brand">MY DUMP <span id="counter"></span></div>
+    <button id="addTop" class="pill" aria-label="Import media">ï¼ Add</button>
   </div>
-  <button id="addTop" class="pill" aria-label="Import media">
-    ＋ Add
-  </button>
-</div>
-
-<div id="empty" class="hidden">
-  <div class="empty-icon">▶</div>
-  <h1>Your private feed.</h1>
-  <p>
-    Add photos, videos, or GIFs from your iPhone.
-    Swipe up or down to browse.
-  </p>
-  <button id="emptyAdd" class="primary">
-    ＋ Add media
-  </button>
-  <small>
-    Files are stored on this device, not uploaded.
-  </small>
-</div>
-
-<div id="details">
-  <div id="filename"></div>
-  <div id="date"></div>
-</div>
-
-<aside id="actions">
-  <button id="fav" aria-label="Toggle favorite">♡</button>
-  <button id="mute" aria-label="Toggle sound">◖))</button>
-  <button id="more" aria-label="More options">⋯</button>
-</aside>
-
-<div id="swipeHint">↑ Swipe for next</div>
+  <div id="empty" class="hidden">
+    <div class="empty-icon">â¶</div>
+    <h1>Your private feed.</h1>
+    <p>Add photos, videos, or GIFs from your iPhone. Swipe up or down to browse.</p>
+    <button id="emptyAdd" class="primary">ï¼ Add media</button>
+    <small>Files are stored on this device, not uploaded.</small>
+  </div>
+  <div id="details"><div id="filename"></div><div id="date"></div></div>
+  <aside id="actions">
+    <button id="fav" aria-label="Toggle favorite">â¡</button>
+    <button id="mute" aria-label="Toggle sound">â))</button>
+    <button id="more" aria-label="More options">â¯</button>
+  </aside>
+  <div id="swipeHint">â Swipe for next</div>
 </section>
-
 <nav>
-  <button id="all" class="active">
-    <span>▣</span>Feed
-  </button>
-  <button id="favorites">
-    <span>♡</span>Favorites
-  </button>
-  <button id="shuffle">
-    <span>⤨</span>Shuffle
-  </button>
-  <button id="library">
-    <span>☷</span>Library
-  </button>
+  <button id="all" class="active"><span>â£</span>Feed</button>
+  <button id="favorites"><span>â¡</span>Favorites</button>
+  <button id="shuffle"><span>â¤¨</span>Shuffle</button>
+  <button id="library"><span>â·</span>Library</button>
 </nav>
-
-<input
-  id="fileInput"
-  type="file"
-  multiple
-  accept="image/*,video/*,.gif,.mov,.mp4,.m4v,.webm"
-  hidden
->
-
+<input id="fileInput" type="file" multiple
+       accept="image/*,video/*,.gif,.mov,.mp4,.m4v,.webm" hidden>
 <div id="sheetBackdrop" class="hidden"></div>
-
-<section
-  id="sheet"
-  class="hidden"
-  role="dialog"
-  aria-modal="true"
->
+<section id="sheet" class="hidden" role="dialog" aria-modal="true">
   <div class="handle"></div>
   <h2>Library</h2>
   <div id="stats"></div>
-
-  <button id="sheetAdd">
-    ＋ Import more media
-  </button>
-
-  <button id="sort">
-    ⇅ Sort: newest first
-  </button>
-
-  <button id="delete">
-    🗑 Delete current item
-  </button>
-
-  <button id="closeSheet">
-    Close
-  </button>
-
-  <p class="warning">
-    Your imported media is saved inside this app's
-    local browser storage. Keep the original files
-    in Photos or Files as your backup. Deleting
-    website/app data can erase this collection.
-  </p>
+  <button id="sheetAdd">ï¼ Import more media</button>
+  <button id="sort">â Sort: newest first</button>
+  <button id="delete">ð Delete current item</button>
+  <button id="lockNow" type="button">ð Lock app now</button>
+  <button id="closeSheet">Close</button>
+  <p class="warning">Your imported media is saved inside this app's local browser storage. Keep the original files in Photos or Files as your backup. Deleting website/app data can erase this collection.</p>
 </section>
-
 <div id="toast" role="status"></div>
-
 </main>
 
-<script src="app.js?v=orientation-2" defer></script>
+<script>
+/* This PIN is a device-local privacy lock, not server-side authentication. */
+(() => {
+  'use strict';
+  const KEY = 'my-dump-passcode-v4';
+  const screen = document.getElementById('passcodeScreen');
+  const form = document.getElementById('passcodeCard');
+  const input = document.getElementById('passcodeInput');
+  const title = document.getElementById('passcodeTitle');
+  const help = document.getElementById('passcodeHelp');
+  const message = document.getElementById('passcodeMessage');
+  const submit = document.getElementById('passcodeSubmit');
+  let phase = 'create';
+  let firstCode = '';
+  let record = null;
+  let busy = false;
 
+  function loadRecord() {
+    try {
+      const result = JSON.parse(localStorage.getItem(KEY) || 'null');
+      return result && typeof result.salt === 'string' &&
+        typeof result.hash === 'string' ? result : null;
+    } catch (_) { return null; }
+  }
+
+  function setView() {
+    input.value = '';
+    message.textContent = '';
+    submit.disabled = false;
+    if (phase === 'create') {
+      title.textContent = 'Create your passcode';
+      help.textContent = 'Choose six digits to open My Dump on this iPhone.';
+      submit.textContent = 'Continue';
+    } else if (phase === 'confirm') {
+      title.textContent = 'Confirm your passcode';
+      help.textContent = 'Enter the same six digits again.';
+      submit.textContent = 'Save passcode';
+    } else {
+      title.textContent = 'My Dump is locked';
+      help.textContent = 'Enter your six-digit passcode to open your photos.';
+      submit.textContent = 'Unlock';
+    }
+  }
+
+  function lockApp() {
+    record = loadRecord();
+    phase = record ? 'unlock' : 'create';
+    firstCode = '';
+    screen.hidden = false;
+    document.body.classList.add('dump-locked');
+    setView();
+  }
+
+  function unlockApp() {
+    document.body.classList.remove('dump-locked');
+    screen.hidden = true;
+    input.value = '';
+    firstCode = '';
+  }
+
+  function makeSalt() {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    return btoa(String.fromCharCode(...bytes));
+  }
+
+  async function hashCode(code, salt) {
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveBits']
+    );
+    const saltBytes = Uint8Array.from(atob(salt), c => c.charCodeAt(0));
+    const digest = await crypto.subtle.deriveBits(
+      { name:'PBKDF2', salt:saltBytes, iterations:150000, hash:'SHA-256' },
+      key, 256
+    );
+    return Array.from(new Uint8Array(digest),
+      byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (busy) return;
+    const code = input.value.trim();
+    if (!/^\d{6}$/.test(code)) {
+      message.textContent = 'Enter exactly six numbers.';
+      return;
+    }
+    busy = true;
+    submit.disabled = true;
+    message.textContent = '';
+    try {
+      if (phase === 'create') {
+        firstCode = code;
+        phase = 'confirm';
+        setView();
+      } else if (phase === 'confirm') {
+        if (code !== firstCode) {
+          firstCode = '';
+          phase = 'create';
+          setView();
+          message.textContent = 'The numbers did not match. Try again.';
+        } else {
+          const next = {salt:makeSalt()};
+          next.hash = await hashCode(code, next.salt);
+          localStorage.setItem(KEY, JSON.stringify(next));
+          record = next;
+          unlockApp();
+        }
+      } else if (await hashCode(code, record.salt) === record.hash) {
+        unlockApp();
+      } else {
+        input.value = '';
+        message.textContent = 'Incorrect passcode. Try again.';
+      }
+    } catch (error) {
+      console.error(error);
+      message.textContent = 'Cannot save or check the code. Open the HTTPS app in Safari.';
+    } finally {
+      busy = false;
+      submit.disabled = false;
+    }
+  });
+
+  document.getElementById('lockNow').addEventListener('click', () => {
+    document.getElementById('sheet').classList.add('hidden');
+    document.getElementById('sheetBackdrop').classList.add('hidden');
+    lockApp();
+  });
+
+  /* Require the passcode again when the website/app is reopened. */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) lockApp();
+  });
+  window.addEventListener('pagehide', lockApp);
+  window.addEventListener('pageshow', event => {
+    if (event.persisted) lockApp();
+  });
+
+  lockApp();
+})();
+</script>
+<script src="app.js?v=lock-v4" defer></script>
 </body>
 </html>
