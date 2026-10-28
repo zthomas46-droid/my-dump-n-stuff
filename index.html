@@ -17,8 +17,7 @@
 <title>My Dump</title>
 
 <style>
-
-/* Hide unnecessary interface elements */
+/* Hide unnecessary controls */
 #details,
 #actions,
 #swipeHint,
@@ -27,12 +26,11 @@ nav button:not(#library) {
   display: none !important;
 }
 
-/* Full-screen media */
 #stage {
   inset: 0 !important;
 }
 
-/* Minimal top bar */
+/* Minimal Add button area */
 #topbar {
   justify-content: flex-end !important;
   padding: calc(13px + env(safe-area-inset-top)) 17px 17px !important;
@@ -43,7 +41,7 @@ nav button:not(#library) {
   ) !important;
 }
 
-/* Small floating Library button */
+/* Floating Library button */
 nav {
   display: flex !important;
   position: fixed !important;
@@ -60,7 +58,6 @@ nav {
   z-index: 100 !important;
 }
 
-/* Library button appearance */
 nav #library {
   display: flex !important;
   align-items: center !important;
@@ -76,16 +73,39 @@ nav #library {
   font-size: 0 !important;
 }
 
-/* Show only the Library icon */
 nav #library span {
   font-size: 23px !important;
 }
 
+/* Photo orientation and sizing */
+html body #mediaMount .dump-slide img.media,
+html body #mediaMount > img.media {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+/* Show the entire photo when needed */
+html body #mediaMount .dump-slide img.media.dump-show-all,
+html body #mediaMount > img.media.dump-show-all {
+  object-fit: contain !important;
+}
+
+/* Keep videos fully visible */
+html body #mediaMount .dump-slide video.media,
+html body #mediaMount > video.media {
+  object-fit: contain !important;
+}
 </style>
 </head>
 
 <body>
-
 <main id="app">
 
 <section id="stage" aria-label="Media feed">
@@ -96,7 +116,6 @@ nav #library span {
   <div class="brand">
     MY DUMP <span id="counter"></span>
   </div>
-
   <button id="addTop" class="pill" aria-label="Import media">
     ＋ Add
   </button>
@@ -136,15 +155,12 @@ nav #library span {
   <button id="all" class="active">
     <span>▣</span>Feed
   </button>
-
   <button id="favorites">
     <span>♡</span>Favorites
   </button>
-
   <button id="shuffle">
     <span>⤨</span>Shuffle
   </button>
-
   <button id="library">
     <span>☷</span>Library
   </button>
@@ -166,43 +182,110 @@ nav #library span {
   role="dialog"
   aria-modal="true"
 >
+  <div class="handle"></div>
+  <h2>Library</h2>
+  <div id="stats"></div>
 
-<div class="handle"></div>
+  <button id="sheetAdd">
+    ＋ Import more media
+  </button>
 
-<h2>Library</h2>
+  <button id="sort">
+    ⇅ Sort: newest first
+  </button>
 
-<div id="stats"></div>
+  <button id="delete">
+    🗑 Delete current item
+  </button>
 
-<button id="sheetAdd">
-  ＋ Import more media
-</button>
+  <button id="closeSheet">
+    Close
+  </button>
 
-<button id="sort">
-  ⇅ Sort: newest first
-</button>
-
-<button id="delete">
-  🗑 Delete current item
-</button>
-
-<button id="closeSheet">
-  Close
-</button>
-
-<p class="warning">
-  Your imported media is saved inside this app's local
-  browser storage. Keep the original files in Photos
-  or Files as your backup. Deleting website/app data
-  can erase this collection.
-</p>
-
+  <p class="warning">
+    Your imported media is saved inside this app's
+    local browser storage. Keep the original files
+    in Photos or Files as your backup. Deleting
+    website/app data can erase this collection.
+  </p>
 </section>
 
 <div id="toast" role="status"></div>
 
 </main>
 
-<script src="app.js?v=2" defer></script>
+<script>
+/* Automatic portrait and landscape detection */
+(() => {
+  'use strict';
+
+  const mount = document.getElementById('mediaMount');
+
+  function chooseFit(img) {
+    if (!img.naturalWidth || !img.naturalHeight) return;
+
+    let showAll;
+
+    if (img.dataset.dumpManualFit) {
+      showAll = img.dataset.dumpManualFit === 'contain';
+    } else {
+      const ratio = img.naturalWidth / img.naturalHeight;
+      const isWidePhoto = ratio > 1.05;
+      const isTallPhoto = ratio < 0.95;
+      const screenIsWide =
+        window.innerWidth > window.innerHeight;
+
+      showAll =
+        (!isWidePhoto && !isTallPhoto) ||
+        (isWidePhoto && !screenIsWide) ||
+        (isTallPhoto && screenIsWide);
+    }
+
+    img.classList.toggle('dump-show-all', showAll);
+  }
+
+  function watchImage(img) {
+    if (img.dataset.dumpWatched) return;
+
+    img.dataset.dumpWatched = '1';
+
+    img.addEventListener('load', () => {
+      chooseFit(img);
+    });
+
+    /* Tap picture to switch fitting modes */
+    img.addEventListener('click', () => {
+      img.dataset.dumpManualFit =
+        img.classList.contains('dump-show-all')
+          ? 'cover'
+          : 'contain';
+
+      chooseFit(img);
+    });
+
+    if (img.complete) chooseFit(img);
+  }
+
+  function scan() {
+    mount.querySelectorAll('img.media')
+      .forEach(watchImage);
+  }
+
+  new MutationObserver(scan).observe(mount, {
+    childList: true,
+    subtree: true
+  });
+
+  window.addEventListener('resize', () => {
+    mount.querySelectorAll('img.media')
+      .forEach(chooseFit);
+  }, { passive: true });
+
+  scan();
+})();
+</script>
+
+<script src="app.js?v=orientation-1" defer></script>
 
 </body>
 </html>
